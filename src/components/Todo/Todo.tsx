@@ -1,14 +1,19 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Checkbox, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { NewTodo } from "./NewTodo";
 import { useState } from "react";
 
 export const Todo = () => {
-  const [list, setList] = useState([]);
+  const [todos, setTodos] = useState<any[]>([]);
+  const [isAllChecked, setIsAllChecked] = useState(false);
+
+  const handleCheckChange = () => {
+    setIsAllChecked(!isAllChecked);
+  };
 
   const passDataToParent = (list: any) => {
-    setList(list);
+    setTodos(list);
   };
 
   return (
@@ -18,22 +23,24 @@ export const Todo = () => {
         spacing={2}
       >
         <NewTodo passDataToParent={passDataToParent} />
-        {list.map((item: any, index) => (
-          <Typography
-            variant="body1"
-            p={"10px"}
+        {todos.map((item: any, index: number) => (
+          <Box
             key={index}
+            display={"flex"}
+            justifyContent="space-between"
             sx={{
               color: "black",
               bgcolor: "white",
-              boxShadow: 3,
-              justifyContent: "left",
-              borderRadius: "2px",
+              padding: "10px",
+              boxShadow: "5px 5px 5px lightgray",
+              borderRadius: "5px",
             }}
           >
-            {item.todo}
-            {item.done ? " ✅" : " ❌"}
-          </Typography>
+            <Typography variant="body1" p={"10px"}>
+              {item.todo}
+            </Typography>
+            <Checkbox value={item.done} onClick={handleCheckChange} />
+          </Box>
         ))}
       </Stack>
     </Box>
