@@ -2,6 +2,7 @@ import { Input } from "@mui/material";
 import { FormEventHandler, useState } from "react";
 
 type Todo = {
+  id: number;
   todo: string;
   done: boolean;
 };
@@ -18,6 +19,7 @@ export const NewTodo = ({ passDataToParent }: any) => {
     e.preventDefault();
     if (inputData.todo !== "") {
       const newTodo = {
+        id: todoList.length + 1,
         todo: inputData.todo,
         done: inputData.done,
       };

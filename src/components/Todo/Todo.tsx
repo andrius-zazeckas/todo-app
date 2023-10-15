@@ -6,14 +6,20 @@ import { useState } from "react";
 
 export const Todo = () => {
   const [todos, setTodos] = useState<any[]>([]);
-  const [isAllChecked, setIsAllChecked] = useState(false);
 
-  const handleCheckChange = () => {
-    setIsAllChecked(!isAllChecked);
+  const handleCheckChange = (id: number) => {
+    const updatedTodos = [...todos];
+    const checkedTodo = updatedTodos[id];
+    updatedTodos.splice(id, 1);
+    updatedTodos.push(checkedTodo);
+    checkedTodo.done = !checkedTodo.done;
+    setTodos(updatedTodos);
   };
 
+  console.log(todos);
   const passDataToParent = (list: any) => {
-    setTodos(list);
+    const sortedList = list.sort((a: any, b: any) => b.id - a.id);
+    setTodos(sortedList);
   };
 
   return (
@@ -23,9 +29,9 @@ export const Todo = () => {
         spacing={2}
       >
         <NewTodo passDataToParent={passDataToParent} />
-        {todos.map((item: any, index: number) => (
+        {todos.map((item: any, id: number) => (
           <Box
-            key={index}
+            key={id}
             display={"flex"}
             justifyContent="space-between"
             sx={{
@@ -36,10 +42,17 @@ export const Todo = () => {
               borderRadius: "5px",
             }}
           >
-            <Typography variant="body1" p={"10px"}>
+            <Typography
+              variant="body1"
+              p={"10px"}
+              sx={{ textDecoration: item.done ? "line-through" : "none" }}
+            >
               {item.todo}
             </Typography>
-            <Checkbox value={item.done} onClick={handleCheckChange} />
+            <Checkbox
+              checked={item.done}
+              onChange={() => handleCheckChange(id)}
+            />
           </Box>
         ))}
       </Stack>
