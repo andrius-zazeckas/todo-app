@@ -13,6 +13,7 @@ import Divider from "@mui/material/Divider";
 import { NewTodo } from "./NewTodo";
 import { useState } from "react";
 import type { TodoType } from "./types/Todo";
+import { Delete } from "@mui/icons-material";
 
 export const Todo = () => {
   const [todos, setTodos] = useState<TodoType[]>([]);
@@ -34,14 +35,23 @@ export const Todo = () => {
       { ...todoToUncomplete, done: false, added: new Date().getTime() },
     ]);
   };
-  console.log("completedTodos", completedTodos);
 
-  console.log("todos", todos);
+  const handleDelete = (id: number, isCompleted: boolean) => {
+    if (isCompleted) {
+      const updatedCompletedTodos = completedTodos.filter((_, i) => i !== id);
+      setCompletedTodos(updatedCompletedTodos);
+    } else {
+      const updatedTodos = todos.filter((_, i) => i !== id);
+      setTodos(updatedTodos);
+    }
+  };
+
+  console.log(todos);
   const passDataToParent = (list: TodoType[]) => {
     const sortedList = list.sort(
       (a: TodoType, b: TodoType) => b.added - a.added
     );
-    setTodos(sortedList);
+    setTodos([...sortedList]); // Clear the existing todos and set them with the sorted list
   };
 
   return (
@@ -64,8 +74,8 @@ export const Todo = () => {
             <ListItem
               // sx={{ textDecoration: item.done ? "line-through" : "none" }}
               secondaryAction={
-                <IconButton edge="end">
-                  <Typography variant="h6">Delete</Typography>
+                <IconButton edge="end" onClick={() => handleDelete(id, false)}>
+                  <Delete />
                 </IconButton>
               }
             >
@@ -102,8 +112,11 @@ export const Todo = () => {
                 <ListItem
                   sx={{ textDecoration: item.done ? "line-through" : "none" }}
                   secondaryAction={
-                    <IconButton edge="end">
-                      <Typography variant="h6">Delete</Typography>
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleDelete(id, true)}
+                    >
+                      <Delete />
                     </IconButton>
                   }
                 >

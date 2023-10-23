@@ -27,7 +27,6 @@ export const NewTodo = ({ passDataToParent }: NewTodoProps) => {
       setInputData({ todo: "", done: false });
 
       passDataToParent([...todoList, newTodo]);
-      console.log(todoList);
     }
   };
 
