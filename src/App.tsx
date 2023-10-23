@@ -1,11 +1,9 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { Todo } from "./components/Todo/Todo";
 import { Header } from "./components/Header/Header";
 import { Box } from "@mui/material";
 
-function App() {
+export const App = () => {
   return (
     <Box
       m={"auto"}
@@ -21,6 +19,4 @@ function App() {
       <Todo />
     </Box>
   );
-}
-
-export default App;
+};

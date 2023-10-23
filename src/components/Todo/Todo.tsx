@@ -38,7 +38,9 @@ export const Todo = () => {
 
   console.log("todos", todos);
   const passDataToParent = (list: TodoType[]) => {
-    const sortedList = list.sort((a: any, b: any) => b.added - a.added);
+    const sortedList = list.sort(
+      (a: TodoType, b: TodoType) => b.added - a.added
+    );
     setTodos(sortedList);
   };
 
@@ -49,7 +51,7 @@ export const Todo = () => {
         divider={<Divider orientation="horizontal" flexItem />}
         spacing={2}
       >
-        {todos.map((item: any, id: number) => (
+        {todos.map((item: TodoType, id: number) => (
           <List
             key={id}
             sx={{
@@ -87,7 +89,7 @@ export const Todo = () => {
             spacing={2}
           >
             <Typography variant="h6">Completed Todos</Typography>
-            {completedTodos.map((item: any, id: number) => (
+            {completedTodos.map((item: TodoType, id: number) => (
               <List
                 key={id}
                 sx={{
@@ -98,7 +100,7 @@ export const Todo = () => {
                 }}
               >
                 <ListItem
-                  // sx={{ textDecoration: item.done ? "line-through" : "none" }}
+                  sx={{ textDecoration: item.done ? "line-through" : "none" }}
                   secondaryAction={
                     <IconButton edge="end">
                       <Typography variant="h6">Delete</Typography>
