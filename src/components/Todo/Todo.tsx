@@ -12,10 +12,11 @@ import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { NewTodo } from "./NewTodo";
 import { useState } from "react";
+import type { TodoType } from "./types/Todo";
 
 export const Todo = () => {
-  const [todos, setTodos] = useState<any[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<any[]>([]);
+  const [todos, setTodos] = useState<TodoType[]>([]);
+  const [completedTodos, setCompletedTodos] = useState<TodoType[]>([]);
 
   const handleCheck = (id: number) => {
     const todoToComplete = todos[id];
@@ -36,7 +37,7 @@ export const Todo = () => {
   console.log("completedTodos", completedTodos);
 
   console.log("todos", todos);
-  const passDataToParent = (list: any) => {
+  const passDataToParent = (list: TodoType[]) => {
     const sortedList = list.sort((a: any, b: any) => b.added - a.added);
     setTodos(sortedList);
   };

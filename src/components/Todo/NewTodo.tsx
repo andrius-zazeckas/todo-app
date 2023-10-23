@@ -1,15 +1,12 @@
 import { Input } from "@mui/material";
 import { FormEventHandler, useState } from "react";
+import type { TodoType } from "./types/Todo";
 
-type Todo = {
-  id: number;
-  todo: string;
-  done: boolean;
-  added: number;
+type NewTodoProps = {
+  passDataToParent: (data: TodoType[]) => void;
 };
-
-export const NewTodo = ({ passDataToParent }: any) => {
-  const [todoList, setTodoList] = useState<Todo[]>([]);
+export const NewTodo = ({ passDataToParent }: NewTodoProps) => {
+  const [todoList, setTodoList] = useState<TodoType[]>([]);
   const [inputData, setInputData] = useState({ todo: "", done: false });
 
   const updateInputData = (value: string, key: "todo" | "done") => {
