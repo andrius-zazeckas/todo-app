@@ -5,6 +5,7 @@ type Todo = {
   id: number;
   todo: string;
   done: boolean;
+  added: number;
 };
 
 export const NewTodo = ({ passDataToParent }: any) => {
@@ -22,6 +23,7 @@ export const NewTodo = ({ passDataToParent }: any) => {
         id: todoList.length + 1,
         todo: inputData.todo,
         done: inputData.done,
+        added: new Date().getTime(),
       };
 
       setTodoList((prevList) => [...prevList, newTodo]);

@@ -17,27 +17,27 @@ export const Todo = () => {
   const [todos, setTodos] = useState<any[]>([]);
   const [completedTodos, setCompletedTodos] = useState<any[]>([]);
 
-  const handleCheckChange = (id: number) => {
-    const updatedTodos = [...todos];
-    const checkedTodo = updatedTodos[id];
-    updatedTodos.splice(id, 1);
-    // updatedTodos.push(checkedTodo);
-    checkedTodo.done = !checkedTodo.done;
-    if (checkedTodo.done === true) {
-      setCompletedTodos([...completedTodos, checkedTodo]);
-    }
-    if (checkedTodo.done === false) {
-      completedTodos.splice(id, 1);
-    }
-    // console.log(checkedTodo, checkedTodo.done);
-    // setTodos(updatedTodos);
+  const handleCheck = (id: number) => {
+    const todoToComplete = todos[id];
+    const updatedTodos = todos.filter((_, i) => i !== id);
+    setTodos(updatedTodos);
+    setCompletedTodos([...completedTodos, { ...todoToComplete, done: true }]);
   };
 
-  console.log(completedTodos);
+  const handleUnceck = (id: number) => {
+    const todoToUncomplete = completedTodos[id];
+    const updatedCompletedTodos = completedTodos.filter((_, i) => i !== id);
+    setCompletedTodos(updatedCompletedTodos);
+    setTodos([
+      ...todos,
+      { ...todoToUncomplete, done: false, added: new Date().getTime() },
+    ]);
+  };
+  console.log("completedTodos", completedTodos);
 
-  console.log(todos);
+  console.log("todos", todos);
   const passDataToParent = (list: any) => {
-    const sortedList = list.sort((a: any, b: any) => b.id - a.id);
+    const sortedList = list.sort((a: any, b: any) => b.added - a.added);
     setTodos(sortedList);
   };
 
@@ -72,7 +72,7 @@ export const Todo = () => {
                 <Checkbox
                   edge="start"
                   checked={item.done}
-                  onChange={() => handleCheckChange(id)}
+                  onChange={() => handleCheck(id)}
                 />
               </ListItemIcon>
             </ListItem>
@@ -110,7 +110,7 @@ export const Todo = () => {
                     <Checkbox
                       edge="start"
                       checked={item.done}
-                      onChange={() => handleCheckChange(id)}
+                      onChange={() => handleUnceck(id)}
                     />
                   </ListItemIcon>
                 </ListItem>
