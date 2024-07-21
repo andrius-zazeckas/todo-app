@@ -16,42 +16,54 @@ import type { TodoType } from "./types/Todo";
 import { Delete } from "@mui/icons-material";
 
 export const Todo = () => {
-  const [todos, setTodos] = useState<TodoType[]>([]);
+  const [uncompletedTodos, setUncompletedTodos] = useState<TodoType[]>([]);
   const [completedTodos, setCompletedTodos] = useState<TodoType[]>([]);
 
   const handleCheck = (id: number) => {
-    const todoToComplete = todos[id];
-    const updatedTodos = todos.filter((_, i) => i !== id);
-    setTodos(updatedTodos);
-    setCompletedTodos([...completedTodos, { ...todoToComplete, done: true }]);
-  };
-
-  const handleUnceck = (id: number) => {
-    const todoToUncomplete = completedTodos[id];
-    const updatedCompletedTodos = completedTodos.filter((_, i) => i !== id);
-    setCompletedTodos(updatedCompletedTodos);
-    setTodos([
-      ...todos,
-      { ...todoToUncomplete, done: false, added: new Date().getTime() },
+    const todoToComplete = uncompletedTodos[id];
+    uncompletedTodos[id].done = true;
+    const updatedUncompletedTodos = uncompletedTodos.filter((_, i) => i !== id);
+    setUncompletedTodos(updatedUncompletedTodos);
+    setCompletedTodos([
+      ...completedTodos,
+      { ...todoToComplete, done: true, added: new Date().getTime() },
     ]);
   };
 
-  const handleDelete = (id: number, isCompleted: boolean) => {
-    if (isCompleted) {
-      const updatedCompletedTodos = completedTodos.filter((_, i) => i !== id);
-      setCompletedTodos(updatedCompletedTodos);
+  const handleUncheck = (id: number) => {
+    const todoToUncheck = completedTodos[id];
+    completedTodos[id].done = false;
+    const updatedCompletedTodos = completedTodos.filter((_, i) => i !== id);
+    setCompletedTodos(updatedCompletedTodos);
+    setUncompletedTodos([
+      ...uncompletedTodos,
+      { ...todoToUncheck, done: false, added: new Date().getTime() },
+    ]);
+  };
+
+  const handleDelete = (id: number, completed: boolean) => {
+    const todoToDelete = completed ? completedTodos : uncompletedTodos;
+    todoToDelete[id].deleted = true;
+    const updatedTodos = todoToDelete.filter((_, i) => i !== id);
+
+    if (completed) {
+      setCompletedTodos(updatedTodos);
     } else {
-      const updatedTodos = todos.filter((_, i) => i !== id);
-      setTodos(updatedTodos);
+      setUncompletedTodos(updatedTodos);
     }
   };
 
-  console.log(todos);
   const passDataToParent = (list: TodoType[]) => {
-    const sortedList = list.sort(
-      (a: TodoType, b: TodoType) => b.added - a.added
-    );
-    setTodos([...sortedList]); // Clear the existing todos and set them with the sorted list
+    const sortedUncompletedTodos = list
+      .filter((item) => !item.done && !item.deleted)
+      .sort((a, b) => b.added - a.added);
+
+    const sortedCompletedTodos = list
+      .filter((item) => item.done && !item.deleted)
+      .sort((a, b) => b.added - a.added);
+
+    setUncompletedTodos(sortedUncompletedTodos);
+    setCompletedTodos(sortedCompletedTodos);
   };
 
   return (
@@ -61,35 +73,13 @@ export const Todo = () => {
         divider={<Divider orientation="horizontal" flexItem />}
         spacing={2}
       >
-        {todos.map((item: TodoType, id: number) => (
-          <List
+        {uncompletedTodos.map((todo, id) => (
+          <TodoItem
             key={id}
-            sx={{
-              width: "100%",
-              bgcolor: "background.paper",
-              boxShadow: "5px 5px 5px lightgray",
-              borderRadius: "5px",
-            }}
-          >
-            <ListItem
-              // sx={{ textDecoration: item.done ? "line-through" : "none" }}
-              secondaryAction={
-                <IconButton edge="end" onClick={() => handleDelete(id, false)}>
-                  <Delete />
-                </IconButton>
-              }
-            >
-              <ListItemText primary={item.todo} />
-
-              <ListItemIcon>
-                <Checkbox
-                  edge="start"
-                  checked={item.done}
-                  onChange={() => handleCheck(id)}
-                />
-              </ListItemIcon>
-            </ListItem>
-          </List>
+            todo={todo}
+            handleCheck={() => handleCheck(id)}
+            handleDelete={() => handleDelete(id, false)}
+          />
         ))}
       </Stack>
       {completedTodos.length > 0 && (
@@ -99,42 +89,53 @@ export const Todo = () => {
             spacing={2}
           >
             <Typography variant="h6">Completed Todos</Typography>
-            {completedTodos.map((item: TodoType, id: number) => (
-              <List
+            {completedTodos.map((todo, id) => (
+              <TodoItem
                 key={id}
-                sx={{
-                  width: "100%",
-                  bgcolor: "background.paper",
-                  boxShadow: "5px 5px 5px lightgray",
-                  borderRadius: "5px",
-                }}
-              >
-                <ListItem
-                  sx={{ textDecoration: item.done ? "line-through" : "none" }}
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      onClick={() => handleDelete(id, true)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  }
-                >
-                  <ListItemText primary={item.todo} />
-
-                  <ListItemIcon>
-                    <Checkbox
-                      edge="start"
-                      checked={item.done}
-                      onChange={() => handleUnceck(id)}
-                    />
-                  </ListItemIcon>
-                </ListItem>
-              </List>
+                todo={todo}
+                handleCheck={() => handleUncheck(id)}
+                handleDelete={() => handleDelete(id, true)}
+              />
             ))}
           </Stack>
         </Box>
       )}
     </Box>
+  );
+};
+
+const TodoItem = ({
+  todo,
+  handleCheck,
+  handleDelete,
+}: {
+  todo: TodoType;
+  handleCheck: () => void;
+  handleDelete: () => void;
+}) => {
+  return (
+    <List
+      sx={{
+        width: "100%",
+        bgcolor: "background.paper",
+        boxShadow: "5px 5px 5px lightgray",
+        borderRadius: "5px",
+      }}
+    >
+      <ListItem
+        sx={{ textDecoration: todo.done ? "line-through" : "none" }}
+        secondaryAction={
+          <IconButton edge="end" onClick={handleDelete}>
+            <Delete />
+          </IconButton>
+        }
+      >
+        <ListItemText primary={todo.todo} />
+
+        <ListItemIcon>
+          <Checkbox edge="start" checked={todo.done} onChange={handleCheck} />
+        </ListItemIcon>
+      </ListItem>
+    </List>
   );
 };

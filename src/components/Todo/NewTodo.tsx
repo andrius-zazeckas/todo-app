@@ -21,6 +21,7 @@ export const NewTodo = ({ passDataToParent }: NewTodoProps) => {
         todo: inputData.todo,
         done: inputData.done,
         added: new Date().getTime(),
+        deleted: false,
       };
 
       setTodoList((prevList) => [...prevList, newTodo]);

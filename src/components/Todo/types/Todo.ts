@@ -3,4 +3,5 @@ export type TodoType = {
   todo: string;
   done: boolean;
   added: number;
+  deleted?: boolean;
 };
